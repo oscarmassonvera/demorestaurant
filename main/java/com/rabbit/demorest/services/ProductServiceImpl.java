@@ -54,12 +54,11 @@ public class ProductServiceImpl implements IProductService {
             existingProduct.setNombre(updatedProduct.getNombre());
             existingProduct.setDescripcion(updatedProduct.getDescripcion());
             existingProduct.setPrecio(updatedProduct.getPrecio());
-            // Establece la fecha_actualizacion como la fecha y hora actuales
+            existingProduct.setCantidadEnStock(updatedProduct.getCantidadEnStock());
+            existingProduct.setCategoria(updatedProduct.getCategoria());
             existingProduct.setFechaActualizacion(LocalDateTime.now());
-            // Guarda el producto actualizado en la base de datos
             return productRepository.save(existingProduct);
         } else {
-            // Lanza una excepción EntityNotFoundException si el producto no existe
             throw new EntityNotFoundException("Product with ID " + id + " not found");
         }
     }

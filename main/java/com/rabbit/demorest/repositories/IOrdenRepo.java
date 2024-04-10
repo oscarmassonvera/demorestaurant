@@ -1,6 +1,7 @@
 package com.rabbit.demorest.repositories;
 
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Modifying;
@@ -63,11 +64,24 @@ public interface IOrdenRepo extends CrudRepository<Orden,Long> {
         nativeQuery = true)
     void actualizarTotalOrdenDespuesDeQuitarProducto(@Param("ordenId") Long ordenId);
 
-    // OBTENER PRODUCTOS POR EL ID DE LA ORDEN
-
-    @Query(value = "SELECT op.producto_id, COUNT(op.producto_id) AS cantidad_total FROM orden_producto op WHERE op.orden_id = :ordenId GROUP BY op.producto_id",
-            nativeQuery = true)
-    List<Object[]> obtenerCantidadTotalProductosPorOrdenId(Long ordenId);
+    @Query(value = "SELECT " +
+    "o.id AS id_orden, " +
+    "o.estado AS estado_orden, " +
+    "o.total AS total_orden, " +
+    "p.id AS id_producto, " +
+    "p.nombre AS nombre_producto, " +
+    "p.descripcion AS descripcion_producto, " +
+    "p.precio AS precio_producto, " +
+    "p.cantidad_stock AS cantidad_en_stock, " +
+    "p.categoria AS categoria_producto, " +
+    "COUNT(op.cantidad_producto) AS cantidad_producto " + // Agregar la cantidad del producto por orden
+    "FROM ordenes o " +
+    "JOIN orden_producto op ON o.id = op.orden_id " +
+    "JOIN productos p ON op.producto_id = p.id " +
+    "WHERE o.id = :ordenId " +
+    "GROUP BY o.id, p.id", // Agrupar por id de orden y id de producto
+    nativeQuery = true)
+    List<Object[]> obtenerProductosPorOrdenConCantidad(@Param("ordenId") Long ordenId);
 
     // ELIMINAR ORDEN POR ID 
 
@@ -81,15 +95,40 @@ public interface IOrdenRepo extends CrudRepository<Orden,Long> {
 
     // CREAR HISTORIAL DE ORDENES CON FECHA DIARIA DE ACUERDO AL DATE EN QUE FUE CREADO LA ORDEN 
 
-    @Query(value = "SELECT DATE_FORMAT(o.fecha, '%Y-%m-%d') AS fecha_diaria, " +
-    "DATE_FORMAT(o.fecha, '%H:%i') AS hora_con_minutos, " +
-    "o.id AS id_orden " +
+    @Query(value = "SELECT " +
+    "DATE(o.fecha) AS fecha_diaria, " +
+    "TIME(o.fecha) AS hora_con_minutos, " +
+    "o.id AS id_orden, " +
+    "o.estado AS estado_orden, " +
+    "o.total AS total_orden, " +
+    "p.id AS id_producto, " +
+    "p.nombre AS nombre_producto, " +
+    "p.descripcion AS descripcion_producto, " +
+    "p.precio AS precio_producto, " +
+    "p.cantidad_stock AS cantidad_en_stock, " +
+    "p.categoria AS categoria_producto, " +
+    "COUNT(op.cantidad_producto) AS cantidad_producto " +
     "FROM ordenes o " +
-    "GROUP BY DATE_FORMAT(o.fecha, '%Y-%m-%d'), DATE_FORMAT(o.fecha, '%H:%i'), o.id",
+    "JOIN orden_producto op ON o.id = op.orden_id " +
+    "JOIN productos p ON op.producto_id = p.id " +
+    "WHERE DATE(o.fecha) BETWEEN :fechaInicio AND :fechaFin " +
+    "GROUP BY DATE(o.fecha), TIME(o.fecha), o.id, p.id",
     nativeQuery = true)
-    List<Object[]> crearHistorialOrdenesFechaDiaria();
+List<Object[]> obtenerHistorialOrdenesConProductosPorFechas(@Param("fechaInicio") Date fechaInicio, @Param("fechaFin") Date fechaFin);
 
 
+
+
+
+
+
+
+
+
+
+    @Modifying
+    @Query(value = "DELETE FROM facturas WHERE orden_id = :ordenId", nativeQuery = true)
+    void eliminarRegistrosDeFacturasPorOrdenId(@Param("ordenId") Long ordenId);
 
 
 
