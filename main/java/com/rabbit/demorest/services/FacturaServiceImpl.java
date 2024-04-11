@@ -9,7 +9,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.rabbit.demorest.entities.EstadoOrden;
 import com.rabbit.demorest.entities.Factura;
 import com.rabbit.demorest.entities.FacturaDetalleDTO;
 import com.rabbit.demorest.entities.Orden;
@@ -27,13 +29,16 @@ public class FacturaServiceImpl implements IFacturaService {
 
     @Autowired
     private IOrdenRepo ordenRepository;
-
+    @Transactional
     @Override
     public Factura crearFactura(Double descuentoMonto, Double impuestoMonto, String direccionEnvio, Long idOrden) {
         try {
             // Obtener la orden por su ID
             Orden orden = ordenRepository.findById(idOrden)
                     .orElseThrow(() -> new IllegalArgumentException("No se encontró la orden con ID: " + idOrden));
+            
+            // Cambiar el estado de la orden a FACTURADO
+            orden.setEstado(EstadoOrden.FACTURADO);
             
             // Calcular el subtotal como el total de la orden
             Double subtotal = orden.getTotal();

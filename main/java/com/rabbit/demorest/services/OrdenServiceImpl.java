@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.rabbit.demorest.entities.EstadoOrden;
 import com.rabbit.demorest.entities.Orden;
 import com.rabbit.demorest.entities.Producto;
 import com.rabbit.demorest.repositories.IOrdenRepo;
@@ -98,6 +99,7 @@ public class OrdenServiceImpl implements IOrdenService {
     @Modifying
     public Orden guardarOrden(Orden orden) {
         orden.setFecha(new Date());
+        orden.setEstado(EstadoOrden.PROCESANDO); // Establecer el estado como PROCESANDO
         return ordenRepo.save(orden);
     }
     //                                                          OK
@@ -165,7 +167,8 @@ public class OrdenServiceImpl implements IOrdenService {
                 .map(entry -> {
                     Map<String, Object> entradaHistorial = new HashMap<>();
                     entradaHistorial.put("id_orden", entry.getKey());
-                    entradaHistorial.put("fecha", entry.getValue().get(0)[0]);
+                    entradaHistorial.put("fecha de creacion de la orden", entry.getValue().get(0)[0]);
+                    entradaHistorial.put("hora con minutos de creacion de la orden", entry.getValue().get(0)[1]);
                     entradaHistorial.put("estado", entry.getValue().get(0)[3]);
                     entradaHistorial.put("total", entry.getValue().get(0)[4]);
         

@@ -16,7 +16,7 @@ public class FacturaDetalleDTO {
     private String metodoPago;
     private Long ordenId;
     private Date fechaOrden;
-    private String estadoOrden;
+    private EstadoOrden estadoOrden;
     private Double totalOrden;
     private List<ProductoDTO> productos;
 
@@ -118,11 +118,11 @@ public class FacturaDetalleDTO {
         this.fechaOrden = fechaOrden;
     }
 
-    public String getEstadoOrden() {
+    public EstadoOrden getEstadoOrden() {
         return this.estadoOrden;
     }
 
-    public void setEstadoOrden(String estadoOrden) {
+    public void setEstadoOrden(EstadoOrden estadoOrden) {
         this.estadoOrden = estadoOrden;
     }
 
@@ -142,7 +142,11 @@ public class FacturaDetalleDTO {
         this.productos = productos;
     }
 
-    public FacturaDetalleDTO(Long facturaId, String numeroFactura, Date fechaEmision, Date fechaVencimiento, Double descuentos, Double subtotal, Double impuestos, Double montoTotal, String direccionEnvio, String metodoPago, Long ordenId, Date fechaOrden, String estadoOrden, Double totalOrden, List<ProductoDTO> productos) {
+    public FacturaDetalleDTO(   Long facturaId, String numeroFactura, Date fechaEmision, 
+                                Date fechaVencimiento, Double descuentos, Double subtotal, 
+                                Double impuestos, Double montoTotal, String direccionEnvio, 
+                                String metodoPago, Long ordenId, Date fechaOrden, 
+                                EstadoOrden estadoOrden, Double totalOrden, List<ProductoDTO> productos  ) {
         this.facturaId = facturaId;
         this.numeroFactura = numeroFactura;
         this.fechaEmision = fechaEmision;
@@ -162,6 +166,7 @@ public class FacturaDetalleDTO {
 
     public FacturaDetalleDTO() {
     }
+
 
 }
 

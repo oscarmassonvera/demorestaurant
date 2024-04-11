@@ -20,7 +20,7 @@ public class Orden {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Date fecha;
-    private String estado;
+    private EstadoOrden estado;
     private double total;
     
 
@@ -45,13 +45,15 @@ public class Orden {
         this.fecha = fecha;
     }
 
-    public String getEstado() {
+
+    public EstadoOrden getEstado() {
         return this.estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(EstadoOrden estado) {
         this.estado = estado;
     }
+    
 
     public double getTotal() {
         return this.total;
