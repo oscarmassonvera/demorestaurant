@@ -45,6 +45,7 @@ public class OrdenServiceImpl implements IOrdenService {
                 if (productoOptional.isPresent()) {
                     ordenRepo.agregarProductoAOrden(ordenId, productoId);
                     ordenRepo.actualizarTotalOrden(ordenId);
+                    productRepo.restarCantidadStockProducto(productoId);
                     return ResponseEntity.ok("Producto agregado a la orden exitosamente.");
                 } else {
                     return ResponseEntity.notFound().build(); // Producto no encontrado
@@ -66,6 +67,7 @@ public class OrdenServiceImpl implements IOrdenService {
         }try {
             ordenRepo.eliminarProductosDeOrden(ordenId);
             ordenRepo.actualizarTotalOrdenDespuesDeEliminarProductos(ordenId);
+            productRepo.sumarCantidadStockProductosEnMasaConMismoNombre(ordenId);
         } catch (Exception e) {
             throw new RuntimeException("Error al eliminar los productos de la orden: " + e.getMessage());
         }
@@ -84,6 +86,7 @@ public class OrdenServiceImpl implements IOrdenService {
         try {
             ordenRepo.eliminarProductDeOrden(ordenId, productoId);
             ordenRepo.actualizarTotalOrdenDespuesDeQuitarProducto(ordenId);
+            productRepo.sumarCantidadStockProducto(productoId);
         } catch (Exception e) {
             throw new RuntimeException("Error al quitar el producto de la orden: " + e.getMessage());
         }
