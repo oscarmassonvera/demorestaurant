@@ -25,20 +25,6 @@ public interface IProductRepo extends CrudRepository<Producto,Long> {
                     "WHERE p.id = :productoId")
     void sumarCantidadStockProducto(@Param("productoId") Long productoId);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Query("SELECT op.producto.id, COUNT(op) " +
            "FROM OrdenProducto op " +
            "WHERE op.orden.id = :ordenId " +
@@ -49,32 +35,31 @@ public interface IProductRepo extends CrudRepository<Producto,Long> {
     @Query("UPDATE Producto p SET p.cantidadEnStock = p.cantidadEnStock + :cantidad WHERE p.id = :productoId")
     void sumarCantidadStockProducto(@Param("productoId") Long productoId, @Param("cantidad") Integer cantidad);
     
-
-
-
-
-
-
-
-
-
-
-
-
-
     // EL APARTADO DE STOCK PARA BUSCAR PRODUCTOS Y AGRUPARLOS DE DISTINTA MANERA.
 
-    @Query("SELECT p.categoria, COUNT(p) FROM Producto p GROUP BY p.categoria")
-    List<Object[]> findProductCountByCategory();
+    // Consulta para obtener todos los datos del producto agrupados por categoría
+    @Query("SELECT p.categoria, COUNT(p), p.fechaCreacion, p.cantidadEnStock, p.precio " + 
+    "FROM Producto p " +
+    "GROUP BY p.categoria, p.fechaCreacion, p.cantidadEnStock, p.precio")
+    List<Object[]> findProductDataGroupedByCategory();
 
-    @Query("SELECT p.fechaCreacion, p FROM Producto p ORDER BY p.fechaCreacion")
-    List<Producto> findProductsByDate();
+    // Consulta para obtener todos los datos del producto ordenados por fecha de creación
+    @Query("SELECT p " + 
+    "FROM Producto p " +
+    "ORDER BY p.fechaCreacion")
+    List<Producto> findProductsOrderByDate();
 
-    @Query("SELECT p FROM Producto p ORDER BY p.cantidadEnStock")
-    List<Producto> findProductsByStock();
+    // Consulta para obtener todos los datos del producto ordenados por cantidad en stock
+    @Query("SELECT p " + 
+    "FROM Producto p " +
+    "ORDER BY p.cantidadEnStock")
+    List<Producto> findProductsOrderByStock();
 
-    @Query("SELECT p FROM Producto p ORDER BY p.precio")
-    List<Producto> findProductsByPrice();
+    // Consulta para obtener todos los datos del producto ordenados por precio
+    @Query("SELECT p " + 
+    "FROM Producto p " +
+    "ORDER BY p.precio")
+    List<Producto> findProductsOrderByPrice();
 }
 
 

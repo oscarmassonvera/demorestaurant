@@ -17,24 +17,24 @@ public class StockServiceImplement implements IstockService {
     @Override
     @Transactional(readOnly = true)
     public List<Object[]> findProductCountByCategory() {
-        return productRepository.findProductCountByCategory();
+        return productRepository.findProductDataGroupedByCategory();
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Producto> findProductsByDate() {
-        return productRepository.findProductsByDate();
+        return productRepository.findProductsOrderByDate();
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Producto> findProductsByStock() {
-        return productRepository.findProductsByStock();
+        return productRepository.findProductsOrderByPrice();
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Producto> findProductsByPrice() {
-        return productRepository.findProductsByPrice();
+        return productRepository.findProductsOrderByDate();
     }
 }
