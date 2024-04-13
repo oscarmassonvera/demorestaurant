@@ -31,6 +31,8 @@ public class Producto {
     private LocalDateTime fechaCreacion;
     @Column(name = "fecha_actualizacion")
     private LocalDateTime fechaActualizacion;
+    @Column(name="es_cocinable")
+    private boolean esCocinable; // Nuevo atributo para indicar si el producto es cocinable o no
 
     @OneToMany(mappedBy = "producto")
     @JsonIgnore
@@ -101,6 +103,26 @@ public class Producto {
 
     public void setFechaActualizacion(LocalDateTime fechaActualizacion) {
         this.fechaActualizacion = fechaActualizacion;
+    }
+
+    public boolean isEsCocinable() {
+        return this.esCocinable;
+    }
+
+    public boolean getEsCocinable() {
+        return this.esCocinable;
+    }
+
+    public void setEsCocinable(boolean esCocinable) {
+        this.esCocinable = esCocinable;
+    }
+
+    public List<OrdenProducto> getOrdenProductos() {
+        return this.ordenProductos;
+    }
+
+    public void setOrdenProductos(List<OrdenProducto> ordenProductos) {
+        this.ordenProductos = ordenProductos;
     }
     
 

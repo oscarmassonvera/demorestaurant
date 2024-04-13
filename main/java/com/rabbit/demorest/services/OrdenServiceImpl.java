@@ -44,13 +44,20 @@ public class OrdenServiceImpl implements IOrdenService {
                 Optional<Producto> productoOptional = productRepo.findById(productoId);
                 if (productoOptional.isPresent()) {
                     Producto producto = productoOptional.get();
-                    if (producto.getCantidadEnStock() != null && producto.getCantidadEnStock() > 0) {
+                    if(producto.getEsCocinable()==true){
                         ordenRepo.agregarProductoAOrden(ordenId, productoId);
                         ordenRepo.actualizarTotalOrden(ordenId);
-                        productRepo.restarCantidadStockProducto(productoId);
                         return ResponseEntity.ok("Producto agregado a la orden exitosamente.");
-                    } else {
-                        throw new Exception("La cantidad de este producto en stock es nula.");
+                    }else{
+                        if (producto.getCantidadEnStock() != null && producto.getCantidadEnStock() > 0) {
+                            ordenRepo.agregarProductoAOrden(ordenId, productoId);
+                            ordenRepo.actualizarTotalOrden(ordenId);
+                            productRepo.restarCantidadStockProducto(productoId);
+                            return ResponseEntity.ok("Producto agregado a la orden exitosamente.");
+                        }
+                        else {
+                            throw new Exception("La cantidad de este producto en stock es nula.");
+                        }
                     }
                 } else {
                     return ResponseEntity.notFound().build(); // Producto no encontrado
@@ -91,9 +98,14 @@ public class OrdenServiceImpl implements IOrdenService {
             }
             try {
                 int cantidadProducto = cantidadProductosPorId.getOrDefault(producto.getId(), 0);
-                productRepo.sumarCantidadStockProducto(producto.getId(), cantidadProducto);
-                ordenRepo.eliminarProductsDeOrden(ordenId, producto.getId());
-                ordenRepo.actualizarTotalOrdenDespuesDeEliminarProductos(ordenId);
+                if (producto.getEsCocinable()==true) {
+                    ordenRepo.eliminarProductsDeOrden(ordenId, producto.getId());
+                    ordenRepo.actualizarTotalOrdenDespuesDeEliminarProductos(ordenId);    
+                }else{
+                    productRepo.sumarCantidadStockProducto(producto.getId(), cantidadProducto);
+                    ordenRepo.eliminarProductsDeOrden(ordenId, producto.getId());
+                    ordenRepo.actualizarTotalOrdenDespuesDeEliminarProductos(ordenId);
+                }
             } catch (Exception e) {
                 throw new RuntimeException("Error al eliminar el producto de la orden: " + e.getMessage());
             }
@@ -119,9 +131,15 @@ public class OrdenServiceImpl implements IOrdenService {
         }
 
         try {
-            ordenRepo.eliminarProductDeOrden(ordenId, productoId);
-            ordenRepo.actualizarTotalOrdenDespuesDeQuitarProducto(ordenId);
-            productRepo.sumarCantidadStockProducto(productoId);
+            if (productoOptional.get().getEsCocinable()==true) {
+                ordenRepo.eliminarProductDeOrden(ordenId, productoId);
+                ordenRepo.actualizarTotalOrdenDespuesDeQuitarProducto(ordenId);                
+            }
+            else{
+                ordenRepo.eliminarProductDeOrden(ordenId, productoId);
+                ordenRepo.actualizarTotalOrdenDespuesDeQuitarProducto(ordenId);
+                productRepo.sumarCantidadStockProducto(productoId);
+            }
         } catch (Exception e) {
             throw new RuntimeException("Error al quitar el producto de la orden: " + e.getMessage());
         }

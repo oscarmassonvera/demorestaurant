@@ -32,6 +32,9 @@ public class ProductServiceImpl implements IProductService {
     public Producto createProduct(Producto product) {
         // Establece la fechaCreacion como la fecha y hora actuales
         product.setFechaCreacion(LocalDateTime.now());
+        if (product.getEsCocinable()==true) {
+            product.setCantidadEnStock(null);
+        }
         // Guarda el producto en la base de datos
         return productRepository.save(product);
     }
@@ -57,6 +60,7 @@ public class ProductServiceImpl implements IProductService {
             existingProduct.setCantidadEnStock(updatedProduct.getCantidadEnStock());
             existingProduct.setCategoria(updatedProduct.getCategoria());
             existingProduct.setFechaActualizacion(LocalDateTime.now());
+            existingProduct.setEsCocinable(updatedProduct.getEsCocinable());
             return productRepository.save(existingProduct);
         } else {
             throw new EntityNotFoundException("Product with ID " + id + " not found");
