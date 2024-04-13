@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 
 import com.rabbit.demorest.entities.Orden;
+import com.rabbit.demorest.entities.Producto;
 
 
 
@@ -131,6 +132,24 @@ List<Object[]> obtenerHistorialOrdenesConProductosPorFechas(@Param("fechaInicio"
     void eliminarRegistrosDeFacturasPorOrdenId(@Param("ordenId") Long ordenId);
 
 
+
+
+
+
+
+
+
+// PARA QUITAR PRODUCTO DE ORDEN
+
+    @Query(value = "SELECT p FROM Producto p " +
+            "JOIN OrdenProducto op ON p.id = op.producto.id " +
+            "WHERE op.orden.id = :ordenId")
+    List<Producto> obtenerProductosPorOrdenId(@Param("ordenId") Long ordenId);
+
+
+    @Query(value = "SELECT COUNT(op) > 0 FROM OrdenProducto op " +
+    "WHERE op.orden.id = :ordenId AND op.producto.id = :productoId")
+    boolean existeProductoEnOrden(@Param("ordenId") Long ordenId, @Param("productoId") Long productoId);
 
 
 }

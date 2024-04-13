@@ -43,10 +43,15 @@ public class OrdenServiceImpl implements IOrdenService {
                 // Verificar si el producto existe antes de agregarlo a la orden
                 Optional<Producto> productoOptional = productRepo.findById(productoId);
                 if (productoOptional.isPresent()) {
-                    ordenRepo.agregarProductoAOrden(ordenId, productoId);
-                    ordenRepo.actualizarTotalOrden(ordenId);
-                    productRepo.restarCantidadStockProducto(productoId);
-                    return ResponseEntity.ok("Producto agregado a la orden exitosamente.");
+                    Producto producto = productoOptional.get();
+                    if (producto.getCantidadEnStock() != null && producto.getCantidadEnStock() > 0) {
+                        ordenRepo.agregarProductoAOrden(ordenId, productoId);
+                        ordenRepo.actualizarTotalOrden(ordenId);
+                        productRepo.restarCantidadStockProducto(productoId);
+                        return ResponseEntity.ok("Producto agregado a la orden exitosamente.");
+                    } else {
+                        throw new Exception("La cantidad de este producto en stock es nula.");
+                    }
                 } else {
                     return ResponseEntity.notFound().build(); // Producto no encontrado
                 }
@@ -64,25 +69,49 @@ public class OrdenServiceImpl implements IOrdenService {
         Optional<Orden> ordenOptional = ordenRepo.findById(ordenId);
         if (!ordenOptional.isPresent()) {
             throw new IllegalArgumentException("La orden con ID " + ordenId + " no existe.");
-        }try {
+        }
+        
+        List<Producto> productosEnOrden = ordenRepo.obtenerProductosPorOrdenId(ordenId);
+            
+        if (productosEnOrden.isEmpty()) {
+            throw new IllegalArgumentException("La orden con ID " + ordenId + " no contiene productos.");
+        }
+    
+        for (Producto producto : productosEnOrden) {
+            if (!ordenRepo.existeProductoEnOrden(ordenId, producto.getId())) {
+                throw new IllegalArgumentException("El producto con ID " + producto.getId() + " no está en la orden.");
+            }
+        }
+    
+        try {
             ordenRepo.eliminarProductosDeOrden(ordenId);
             ordenRepo.actualizarTotalOrdenDespuesDeEliminarProductos(ordenId);
-            productRepo.sumarCantidadStockProductosEnMasaConMismoNombre(ordenId);
+    
+            for (Producto producto : productosEnOrden) {
+                productRepo.sumarCantidadStockProducto(producto.getId());
+            }
         } catch (Exception e) {
             throw new RuntimeException("Error al eliminar los productos de la orden: " + e.getMessage());
         }
     }
-    //                                                          OK
+    //                                                              OK
     @Transactional
     @Modifying
     public void quitarProductoDeOrden(Long ordenId, Long productoId) {
         Optional<Orden> ordenOptional = ordenRepo.findById(ordenId);
         if (!ordenOptional.isPresent()) {
             throw new IllegalArgumentException("La orden con ID " + ordenId + " no existe.");
-        }Optional<Producto> productoOptional = productRepo.findById(productoId);
+        }
+        
+        Optional<Producto> productoOptional = productRepo.findById(productoId);
         if (!productoOptional.isPresent()) {
             throw new IllegalArgumentException("El producto con ID " + productoId + " no existe.");
         }
+        
+        if (!ordenRepo.existeProductoEnOrden(ordenId, productoId)) {
+            throw new IllegalArgumentException("El producto con ID " + productoId + " no está en la orden.");
+        }
+
         try {
             ordenRepo.eliminarProductDeOrden(ordenId, productoId);
             ordenRepo.actualizarTotalOrdenDespuesDeQuitarProducto(ordenId);
