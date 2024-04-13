@@ -63,28 +63,7 @@ public class OrdenServiceImpl implements IOrdenService {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //                                                          OK
+    //                                                              OK
     @Transactional
     public void eliminarProductosPorOrdenId(Long ordenId) {
         Optional<Orden> ordenOptional = ordenRepo.findById(ordenId);
@@ -113,27 +92,13 @@ public class OrdenServiceImpl implements IOrdenService {
             try {
                 int cantidadProducto = cantidadProductosPorId.getOrDefault(producto.getId(), 0);
                 productRepo.sumarCantidadStockProducto(producto.getId(), cantidadProducto);
-                ordenRepo.eliminarProductsDeOrden(producto.getId(), ordenId);
+                ordenRepo.eliminarProductsDeOrden(ordenId, producto.getId());
                 ordenRepo.actualizarTotalOrdenDespuesDeEliminarProductos(ordenId);
             } catch (Exception e) {
                 throw new RuntimeException("Error al eliminar el producto de la orden: " + e.getMessage());
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     //                                                              OK
     @Transactional
