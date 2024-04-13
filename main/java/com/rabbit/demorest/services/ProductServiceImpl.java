@@ -67,4 +67,13 @@ public class ProductServiceImpl implements IProductService {
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
+
+
+
+
+
+
+
+
+    // CREAR STOCK DISPONIBLE 
 }

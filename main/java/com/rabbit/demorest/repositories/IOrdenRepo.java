@@ -57,6 +57,10 @@ public interface IOrdenRepo extends CrudRepository<Orden,Long> {
     void eliminarProductDeOrden(@Param("ordenId") Long ordenId, @Param("productoId") Long productoId);
 
     @Modifying
+    @Query(value = "DELETE FROM orden_producto WHERE orden_id = :ordenId AND producto_id = :productoId ", nativeQuery = true)
+    void eliminarProductsDeOrden(@Param("ordenId") Long ordenId, @Param("productoId") Long productoId);
+
+    @Modifying
     @Query(value = "UPDATE ordenes o " +
                "SET o.total = COALESCE((SELECT ROUND(SUM(p.precio * op.cantidad_producto), 2) " +
                                       "FROM productos p JOIN orden_producto op ON p.id = op.producto_id " +
@@ -151,5 +155,8 @@ List<Object[]> obtenerHistorialOrdenesConProductosPorFechas(@Param("fechaInicio"
     "WHERE op.orden.id = :ordenId AND op.producto.id = :productoId")
     boolean existeProductoEnOrden(@Param("ordenId") Long ordenId, @Param("productoId") Long productoId);
 
+
+
+    
 
 }

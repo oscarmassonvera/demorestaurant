@@ -62,9 +62,30 @@ public class OrdenServiceImpl implements IOrdenService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al agregar el producto a la orden: " + e.getMessage());
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     //                                                          OK
     @Transactional
-    @Modifying
     public void eliminarProductosPorOrdenId(Long ordenId) {
         Optional<Orden> ordenOptional = ordenRepo.findById(ordenId);
         if (!ordenOptional.isPresent()) {
@@ -72,28 +93,48 @@ public class OrdenServiceImpl implements IOrdenService {
         }
         
         List<Producto> productosEnOrden = ordenRepo.obtenerProductosPorOrdenId(ordenId);
-            
+        
         if (productosEnOrden.isEmpty()) {
             throw new IllegalArgumentException("La orden con ID " + ordenId + " no contiene productos.");
         }
-    
+        
+        List<Object[]> cantidadProductosPorIdList = productRepo.obtenerCantidadProductosPorOrdenId(ordenId);
+        Map<Long, Integer> cantidadProductosPorId = new HashMap<>();
+        for (Object[] obj : cantidadProductosPorIdList) {
+            Long productoId = (Long) obj[0];
+            Integer cantidad = ((Number) obj[1]).intValue();
+            cantidadProductosPorId.put(productoId, cantidad);
+        }
+
         for (Producto producto : productosEnOrden) {
             if (!ordenRepo.existeProductoEnOrden(ordenId, producto.getId())) {
                 throw new IllegalArgumentException("El producto con ID " + producto.getId() + " no está en la orden.");
             }
-        }
-    
-        try {
-            ordenRepo.eliminarProductosDeOrden(ordenId);
-            ordenRepo.actualizarTotalOrdenDespuesDeEliminarProductos(ordenId);
-    
-            for (Producto producto : productosEnOrden) {
-                productRepo.sumarCantidadStockProducto(producto.getId());
+            try {
+                int cantidadProducto = cantidadProductosPorId.getOrDefault(producto.getId(), 0);
+                productRepo.sumarCantidadStockProducto(producto.getId(), cantidadProducto);
+                ordenRepo.eliminarProductsDeOrden(producto.getId(), ordenId);
+                ordenRepo.actualizarTotalOrdenDespuesDeEliminarProductos(ordenId);
+            } catch (Exception e) {
+                throw new RuntimeException("Error al eliminar el producto de la orden: " + e.getMessage());
             }
-        } catch (Exception e) {
-            throw new RuntimeException("Error al eliminar los productos de la orden: " + e.getMessage());
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     //                                                              OK
     @Transactional
     @Modifying
