@@ -33,6 +33,13 @@ public class FacturaServiceImpl implements IFacturaService {
     @Override
     public Factura crearFactura(Double descuentoMonto, Double impuestoMonto, String direccionEnvio, Long idOrden) {
         try {
+
+            // Verificar si la factura para la orden ya ha sido creada
+            Factura facturaExistente = facturaRepository.findByOrdenId(idOrden);
+            if (facturaExistente != null) {
+                throw new IllegalArgumentException("La factura para la orden con ID " + idOrden + " ya ha sido creada.");
+                }
+
             // Obtener la orden por su ID
             Orden orden = ordenRepository.findById(idOrden)
                     .orElseThrow(() -> new IllegalArgumentException("No se encontró la orden con ID: " + idOrden));
@@ -212,26 +219,33 @@ public List<FacturaDetalleDTO> obtenerTodasLasFacturas() {
 // ELIMINAR FACTURA POR ID
 
 
-
-
-@Override
-public void eliminarFacturaPorId(Long id) {
-    try {
-        // Verificar si la factura existe
-        Factura factura = facturaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No se encontró la factura con ID: " + id));
-
-        // Eliminar la factura
-        facturaRepository.delete(factura);
-    } catch (ResourceNotFoundException ex) {
-        // Manejar excepción si la factura no se encuentra
-        throw ex;
-    } catch (Exception ex) {
-        // Manejar cualquier otra excepción y registrarla
-        ex.printStackTrace();
-        throw new RuntimeException("Error al eliminar la factura: " + ex.getMessage());
+    @Override
+    public void eliminarFacturaPorId(Long id) {
+        try {
+            // Obtener la factura por su ID
+            Factura factura = facturaRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("No se encontró la factura con ID: " + id));
+    
+            // Obtener la orden asociada a la factura
+            Orden orden = factura.getOrden();
+            
+            // Cambiar el estado de la orden a PROCESANDO
+            orden.setEstado(EstadoOrden.PROCESANDO);
+    
+            // Guardar la orden con el nuevo estado
+            ordenRepository.save(orden);
+    
+            // Eliminar la factura
+            facturaRepository.delete(factura);
+        } catch (ResourceNotFoundException ex) {
+            // Manejar excepción si la factura no se encuentra
+            throw ex;
+        } catch (Exception ex) {
+            // Manejar cualquier otra excepción y registrarla
+            ex.printStackTrace();
+            throw new RuntimeException("Error al eliminar la factura: " + ex.getMessage());
+        }
     }
-}
 
 
 

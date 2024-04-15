@@ -165,9 +165,42 @@ public class OrdenServiceImpl implements IOrdenService {
         return optionalOrden.orElse(null);
     }
     //                                                          OK
-    @Modifying
     @Transactional
     public void eliminarOrden(Long id) {
+        // Obtener la orden por su ID
+        Optional<Orden> ordenOptional = ordenRepo.findById(id);
+        if (!ordenOptional.isPresent()) {
+            throw new IllegalArgumentException("La orden con ID " + id + " no existe.");
+        }
+        
+        // Obtener los productos de la orden
+        List<Producto> productosEnOrden = ordenRepo.obtenerProductosPorOrdenId(id);
+        
+        // Verificar si la orden contiene productos
+        if (productosEnOrden.isEmpty()) {
+            throw new IllegalArgumentException("La orden con ID " + id + " no contiene productos.");
+        }
+        
+        // Obtener la cantidad de productos por ID de producto
+        List<Object[]> cantidadProductosPorIdList = productRepo.obtenerCantidadProductosPorOrdenId(id);
+        Map<Long, Integer> cantidadProductosPorId = new HashMap<>();
+        for (Object[] obj : cantidadProductosPorIdList) {
+            Long productoId = (Long) obj[0];
+            Integer cantidad = ((Number) obj[1]).intValue();
+            cantidadProductosPorId.put(productoId, cantidad);
+        }
+
+        for (Producto producto : productosEnOrden) {
+            try {
+                // Obtener la cantidad de veces que se repite el producto en la orden
+                int cantidadProducto = cantidadProductosPorId.getOrDefault(producto.getId(), 0);
+                // Sumar la cantidad al stock del producto
+                productRepo.sumarCantidadStockProducto(producto.getId(), cantidadProducto);
+            } catch (Exception e) {
+                throw new RuntimeException("Error al actualizar la cantidad en stock de los productos: " + e.getMessage());
+            }
+        }
+        
         // Eliminar primero los registros de facturas asociados
         ordenRepo.eliminarRegistrosDeFacturasPorOrdenId(id);
         // Luego eliminar la orden y actualizar el total
