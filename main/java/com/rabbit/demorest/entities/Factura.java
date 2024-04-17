@@ -22,14 +22,14 @@ public class Factura {
     private Long id;
 
     // Número único de la factura.
-    @Column(name = "numero_factura")
+    @Column(name = "numero_factura", nullable = false) // Validar que no sea nulo
     private String numeroFactura;
 
-    @Column(name = "fecha_emision")
+    @Column(name = "fecha_emision", nullable = false) // Validar que no sea nula
     private Date fechaEmision;
 
     // Fecha de vencimiento de la factura.
-    @Column(name = "fecha_vencimiento")
+    @Column(name = "fecha_vencimiento", nullable = false) // Validar que no sea nula
     private Date fechaVencimiento;
 
     // Total de descuentos aplicados a la factura.
@@ -39,13 +39,14 @@ public class Factura {
     private Double subtotal;
 
     // Total de impuestos aplicados a la factura.
+    @Column(nullable = false) // Validar que no sea nulo
     private Double impuestos = 0.0;
 
-    @Column(name = "monto_total")
+    @Column(name = "monto_total", nullable = false) // Validar que no sea nulo
     private double montoTotal;
 
     // Dirección de envío a la que se enviará la factura.
-    @Column(name = "direccion_envio")
+    @Column(name = "direccion_envio", nullable = false) // Validar que no sea nulo
     private String direccionEnvio;
 
     // Método de pago utilizado para la factura (por ejemplo, efectivo, tarjeta de crédito, etc.).

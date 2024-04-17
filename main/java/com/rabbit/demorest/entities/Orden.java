@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "ordenes")
@@ -21,6 +22,7 @@ public class Orden {
     private Long id;
     private Date fecha;
     private EstadoOrden estado;
+    @Pattern(regexp = "^\\d*\\.?\\d+$", message = "El total debe ser un valor numérico no negativo")
     private double total;
     
 

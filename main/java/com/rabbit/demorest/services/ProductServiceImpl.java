@@ -11,6 +11,7 @@ import com.rabbit.demorest.entities.Producto;
 import com.rabbit.demorest.repositories.IProductRepo;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 
 @Service
 public class ProductServiceImpl implements IProductService {
@@ -29,7 +30,7 @@ public class ProductServiceImpl implements IProductService {
     }
 
     // Método para crear un nuevo producto
-    public Producto createProduct(Producto product) {
+    public Producto createProduct(@Valid Producto product) {
         // Establece la fechaCreacion como la fecha y hora actuales
         product.setFechaCreacion(LocalDateTime.now());
         if (product.getEsCocinable()==true) {
@@ -50,7 +51,7 @@ public class ProductServiceImpl implements IProductService {
     // LocalDateTime.now(), y se guarda el producto actualizado 
     // en la base de datos.
 
-    public Producto updateProduct(Long id, Producto updatedProduct) {
+    public Producto updateProduct(Long id, @Valid Producto updatedProduct) {
         Optional<Producto> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isPresent()) {
             Producto existingProduct = optionalProduct.get();

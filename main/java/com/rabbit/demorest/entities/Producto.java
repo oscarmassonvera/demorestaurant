@@ -13,6 +13,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity
 @Table(name = "productos")
@@ -21,14 +25,27 @@ public class Producto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Pattern(regexp = "^[a-zA-Z0-9\\s]+$", message = "El nombre del producto debe contener solo letras, números o espacios")
+    @NotBlank(message = "El nombre del producto no puede estar vacío")
     private String nombre;
+
+    @PositiveOrZero(message = "El precio debe ser un valor positivo o cero")
     private double precio;
+
     private String descripcion;
+    
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "La categoría del producto debe contener solo letras o espacios")
+    @NotBlank(message = "La categoría del producto no puede estar vacía")
     private String categoria;
+
+    @PositiveOrZero(message = "La cantidad en stock debe ser un valor positivo o cero")
     @Column(name = "cantidad_stock")
     private Long cantidadEnStock;
+
+    @NotNull(message = "La fecha de creación no puede ser nula")
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
+
     @Column(name = "fecha_actualizacion")
     private LocalDateTime fechaActualizacion;
     @Column(name="es_cocinable")

@@ -10,6 +10,8 @@ import com.rabbit.demorest.entities.Rol;
 import com.rabbit.demorest.entities.Users;
 import com.rabbit.demorest.repositories.IUsersRepo;
 
+import jakarta.validation.Valid;
+
 @Service
 public class UserServiceImplement implements IUserService {
 
@@ -20,7 +22,7 @@ public class UserServiceImplement implements IUserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public Users saveUser(Users user) {
+    public Users saveUser(@Valid Users user) {
         user.setEnabled(true);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);

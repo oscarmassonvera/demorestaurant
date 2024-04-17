@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rabbit.demorest.entities.Users;
 import com.rabbit.demorest.services.IUserService;
 
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {

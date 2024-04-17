@@ -5,6 +5,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "users")
@@ -12,8 +14,18 @@ public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotEmpty(message = "El nombre de usuario no puede estar vacío")
+    @Pattern(regexp = "^[a-zA-Z0-9]{5,20}$", message = "El username debe contener solo letras y números y tener entre 5 y 20 caracteres")
     private String username;
+
+    @NotEmpty(message = "El correo no puede estar vacío")
+    @Pattern(regexp = "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$", message = "Formato de correo inválido")
     private String correo;
+
+    @NotEmpty(message = "La contraseña no puede estar vacía")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", 
+             message = "La contraseña debe tener al menos 8 caracteres, una letra mayúscula,"+
+                       "una letra minúscula, un número y un caractér especial")
     private String password;
     private Rol rol;
 

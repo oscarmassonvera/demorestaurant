@@ -25,6 +25,8 @@ import com.rabbit.demorest.entities.Producto;
 import com.rabbit.demorest.repositories.IOrdenRepo;
 import com.rabbit.demorest.repositories.IProductRepo;
 
+import jakarta.validation.Valid;
+
 
 @Service
 public class OrdenServiceImpl implements IOrdenService {
@@ -153,7 +155,7 @@ public class OrdenServiceImpl implements IOrdenService {
     //                                                          OK
     @Transactional
     @Modifying
-    public Orden guardarOrden(Orden orden) {
+    public Orden guardarOrden(@Valid Orden orden) {
         orden.setFecha(new Date());
         orden.setEstado(EstadoOrden.PROCESANDO); // Establecer el estado como PROCESANDO
         return ordenRepo.save(orden);
