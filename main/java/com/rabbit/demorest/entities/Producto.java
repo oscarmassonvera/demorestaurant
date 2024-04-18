@@ -11,6 +11,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -51,10 +53,26 @@ public class Producto {
     @Column(name="es_cocinable")
     private boolean esCocinable; // Nuevo atributo para indicar si el producto es cocinable o no
 
+    // --------------------- RELACIONES ---------------------
+
     @OneToMany(mappedBy = "producto")
     @JsonIgnore
     private List<OrdenProducto> ordenProductos = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id", nullable = false)
+    private Restaurant restaurant;
     
+    @ManyToOne
+    @JoinColumn(name = "menu_id", nullable = false)
+    private Menu menu;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Users user;
+
+    // --------------------- GETTERS AND SETTERS ---------------------
+
     public Long getId() {
         return this.id;
     }
@@ -140,6 +158,32 @@ public class Producto {
 
     public void setOrdenProductos(List<OrdenProducto> ordenProductos) {
         this.ordenProductos = ordenProductos;
+    }
+    
+
+    public Restaurant getRestaurant() {
+        return this.restaurant;
+    }
+
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
+
+    public Menu getMenu() {
+        return this.menu;
+    }
+
+    public void setMenu(Menu menu) {
+        this.menu = menu;
+    }
+
+
+    public Users getUser() {
+        return this.user;
+    }
+
+    public void setUser(Users user) {
+        this.user = user;
     }
     
 

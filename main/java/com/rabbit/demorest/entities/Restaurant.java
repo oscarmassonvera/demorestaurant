@@ -1,29 +1,41 @@
 package com.rabbit.demorest.entities;
 
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "users")
-public class Users {
+@Table(name = "restaurants")
+public class Restaurant {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NotEmpty(message = "El nombre de usuario no puede estar vacío")
-    @Pattern(regexp = "^[a-zA-Z0-9]{5,20}$", message = "El username debe contener solo letras y números y tener entre 5 y 20 caracteres")
+    @Pattern(regexp = "^[a-zA-Z0-9]{5,50}$", message = "El username debe contener solo letras y números y tener entre 5 y 50 caracteres")
     private String username;
+
+    @NotBlank
+    @Size(max = 200)
+    private String ubicacion;
+
+    @Pattern(regexp = "\\d{10,15}", message = "El número de teléfono debe tener entre 10 y 15 dígitos")
+    @Column(name = "celular")
+    private String celular;
 
     @NotEmpty(message = "El correo no puede estar vacío")
     @Pattern(regexp = "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$", message = "Formato de correo inválido")
@@ -34,26 +46,34 @@ public class Users {
              message = "La contraseña debe tener al menos 8 caracteres, una letra mayúscula,"+
                        "una letra minúscula, un número y un caractér especial")
     private String password;
-    private Rol rol;
 
     private boolean enabled;
 
     // --------------------- RELACIONES ---------------------
 
-    @ManyToOne
-    @JoinColumn(name = "restaurant_id", nullable = false)
-    private Restaurant restaurant;
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Users> usuarios;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Menu> menus;
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Reservacion> reservaciones;
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Producto> productos;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Orden> ordenes;
-
-    // --------------------- GETTERS AND SETTERS ---------------------
     
+    // --------------------- GETTERS AND SETTERS ---------------------
+
+
     public Long getId() {
         return this.id;
     }
@@ -68,6 +88,22 @@ public class Users {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getUbicacion() {
+        return this.ubicacion;
+    }
+
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
+    }
+
+    public String getCelular() {
+        return this.celular;
+    }
+
+    public void setCelular(String celular) {
+        this.celular = celular;
     }
 
     public String getCorreo() {
@@ -86,25 +122,40 @@ public class Users {
         this.password = password;
     }
 
-    public Rol getRol() {
-        return this.rol;
-    }
-
-    public void setRol(Rol rol) {
-        this.rol = rol;
+    public boolean isEnabled() {
+        return this.enabled;
     }
 
     public boolean getEnabled() {
         return this.enabled;
     }
 
-
-    public Restaurant getRestaurant() {
-        return this.restaurant;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
+    public List<Users> getUsuarios() {
+        return this.usuarios;
+    }
+
+    public void setUsuarios(List<Users> usuarios) {
+        this.usuarios = usuarios;
+    }
+
+    public List<Menu> getMenus() {
+        return this.menus;
+    }
+
+    public void setMenus(List<Menu> menus) {
+        this.menus = menus;
+    }
+
+    public List<Reservacion> getReservaciones() {
+        return this.reservaciones;
+    }
+
+    public void setReservaciones(List<Reservacion> reservaciones) {
+        this.reservaciones = reservaciones;
     }
 
     public List<Producto> getProductos() {
@@ -124,45 +175,4 @@ public class Users {
     }
 
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((username == null) ? 0 : username.hashCode());
-        return result;
-    }
-
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Users other = (Users) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (username == null) {
-            if (other.username != null)
-                return false;
-        } else if (!username.equals(other.username))
-            return false;
-        return true;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    
 }

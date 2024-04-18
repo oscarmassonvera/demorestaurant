@@ -37,11 +37,21 @@ public class SecurityConfig {
     }
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        return http.authorizeHttpRequests(
-                (authz)-> authz.
+        return http.authorizeHttpRequests(                                      // ARREGLAR LOS ROLES Y A QUE PARTE 
+                (authz)-> authz.                                                // DE LA APP TIENE ACCESO CADA UNO
+                // USUARIO 
                 requestMatchers(HttpMethod.GET,"/api/users").permitAll().
-                requestMatchers(HttpMethod.POST,"/api/users").permitAll().
-                //.hasRole("ADMIN").
+                requestMatchers(HttpMethod.POST,"/api/users").permitAll(). //.hasRole("RESTAURANT").
+                // PRODUCTO
+                requestMatchers(HttpMethod.GET,"/api/products").hasAnyRole("ADMIN", "WAITER").
+                requestMatchers(HttpMethod.GET,"/api/products/{id}").hasAnyRole("ADMIN", "WAITER").
+                requestMatchers(HttpMethod.POST,"/api/products").hasAnyRole("ADMIN").
+                requestMatchers(HttpMethod.PUT,"/api/products/{id}").hasAnyRole("ADMIN").
+                requestMatchers(HttpMethod.DELETE,"/api/products/{id}").hasAnyRole("ADMIN").
+                // ORDEN
+
+                // FACTURA
+                // STOCK
                 anyRequest().authenticated()).
                 addFilter(new JwtAuthenticationFilter(authenticationConfiguration.getAuthenticationManager())).
                 addFilter(new JwtValidationFilter(authenticationConfiguration.getAuthenticationManager())).
