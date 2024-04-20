@@ -52,6 +52,14 @@ public class Users {
     @JsonIgnore
     private List<Orden> ordenes;
 
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Menu> menu;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Reservacion> reservaciones;
+
     // --------------------- GETTERS AND SETTERS ---------------------
     
     public Long getId() {
@@ -164,5 +172,21 @@ public class Users {
         this.enabled = enabled;
     }
 
+
+    public List<Menu> getMenu() {
+        return this.menu;
+    }
+
+    public void setMenu(List<Menu> menu) {
+        this.menu = menu;
+    }
+
+    public List<Reservacion> getReservaciones() {
+        return this.reservaciones;
+    }
+
+    public void setReservaciones(List<Reservacion> reservaciones) {
+        this.reservaciones = reservaciones;
+    }
     
 }

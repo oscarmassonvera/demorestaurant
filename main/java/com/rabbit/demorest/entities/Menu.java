@@ -38,12 +38,16 @@ public class Menu {
     // --------------------- RELACIONES ---------------------
 
     @ManyToOne
-    @JoinColumn(name = "restaurant_id", nullable = false)
+    @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Producto> productos;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Users user;
 
     // --------------------- GETTERS AND SETTERS ---------------------
 
@@ -86,6 +90,14 @@ public class Menu {
 
     public void setProductos(List<Producto> productos) {
         this.productos = productos;
+    }
+
+    public Users getUser() {
+        return this.user;
+    }
+
+    public void setUser(Users user) {
+        this.user = user;
     }
    
 }

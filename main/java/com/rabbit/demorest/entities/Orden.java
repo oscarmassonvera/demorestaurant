@@ -34,11 +34,11 @@ public class Orden {
     private List<OrdenProducto> ordenProducto = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "restaurant_id", nullable = false)
+    @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "usuario_id")
     private Users user;
 
     // --------------------- GETTERS AND SETTERS ---------------------
