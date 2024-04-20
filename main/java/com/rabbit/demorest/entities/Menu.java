@@ -37,10 +37,6 @@ public class Menu {
 
     // --------------------- RELACIONES ---------------------
 
-    @ManyToOne
-    @JoinColumn(name = "restaurant_id")
-    private Restaurant restaurant;
-
     @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Producto> productos;
@@ -74,14 +70,6 @@ public class Menu {
 
     public void setPrecio(BigDecimal precio) {
         this.precio = precio;
-    }
-
-    public Restaurant getRestaurant() {
-        return this.restaurant;
-    }
-
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
     }
 
     public List<Producto> getProductos() {

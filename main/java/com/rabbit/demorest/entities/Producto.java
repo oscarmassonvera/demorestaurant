@@ -59,9 +59,6 @@ public class Producto {
     @JsonIgnore
     private List<OrdenProducto> ordenProductos = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "restaurant_id")
-    private Restaurant restaurant;
     
     @ManyToOne
     @JoinColumn(name = "menu_id", nullable = false)
@@ -158,15 +155,6 @@ public class Producto {
 
     public void setOrdenProductos(List<OrdenProducto> ordenProductos) {
         this.ordenProductos = ordenProductos;
-    }
-    
-
-    public Restaurant getRestaurant() {
-        return this.restaurant;
-    }
-
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
     }
 
     public Menu getMenu() {

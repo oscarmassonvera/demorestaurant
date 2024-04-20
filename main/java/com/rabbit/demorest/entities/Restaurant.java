@@ -1,21 +1,19 @@
 package com.rabbit.demorest.entities;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "restaurants")
@@ -51,25 +49,9 @@ public class Restaurant {
 
     // --------------------- RELACIONES ---------------------
 
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Users> usuarios;
-
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Menu> menus;
-
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Reservacion> reservaciones;
-
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Producto> productos;
-
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Orden> ordenes;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private Users user;
     
     // --------------------- GETTERS AND SETTERS ---------------------
 
@@ -134,45 +116,14 @@ public class Restaurant {
         this.enabled = enabled;
     }
 
-    public List<Users> getUsuarios() {
-        return this.usuarios;
+
+    public Users getUser() {
+        return this.user;
     }
 
-    public void setUsuarios(List<Users> usuarios) {
-        this.usuarios = usuarios;
+    public void setUser(Users user) {
+        this.user = user;
     }
-
-    public List<Menu> getMenus() {
-        return this.menus;
-    }
-
-    public void setMenus(List<Menu> menus) {
-        this.menus = menus;
-    }
-
-    public List<Reservacion> getReservaciones() {
-        return this.reservaciones;
-    }
-
-    public void setReservaciones(List<Reservacion> reservaciones) {
-        this.reservaciones = reservaciones;
-    }
-
-    public List<Producto> getProductos() {
-        return this.productos;
-    }
-
-    public void setProductos(List<Producto> productos) {
-        this.productos = productos;
-    }
-
-    public List<Orden> getOrdenes() {
-        return this.ordenes;
-    }
-
-    public void setOrdenes(List<Orden> ordenes) {
-        this.ordenes = ordenes;
-    }
-
+    
 
 }

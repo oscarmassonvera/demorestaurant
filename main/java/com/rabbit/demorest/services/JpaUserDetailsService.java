@@ -39,9 +39,12 @@ public class JpaUserDetailsService  implements UserDetailsService{
         List<GrantedAuthority> authorities = new ArrayList<>();
         if (user.getRol() == Rol.ADMIN) {
             authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        } else if (user.getRol() == Rol.WAITER) {
+        } else if (user.getRol() == Rol.SUBTADMIN) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_SUBTADMIN"));
+        } 
+          else if (user.getRol() == Rol.WAITER) {
             authorities.add(new SimpleGrantedAuthority("ROLE_WAITER"));
-        }
+        } 
     
         // RETORNAR UN OBJETO USERDETAILS CON LA INFORMACIÓN DEL USUARIO
         return new org.springframework.security.core.userdetails.User(
