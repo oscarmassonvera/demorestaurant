@@ -39,6 +39,8 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         return http.authorizeHttpRequests(                                      // ARREGLAR LOS ROLES Y A QUE PARTE 
                 (authz)-> authz.                                                // DE LA APP TIENE ACCESO CADA UNO
+                // RESTAURANT
+                
                 // USUARIO 
                 requestMatchers(HttpMethod.GET,"/api/users").permitAll().
                 requestMatchers(HttpMethod.POST,"/api/users").permitAll(). //.hasRole("SUBTADMIN").
@@ -51,7 +53,17 @@ public class SecurityConfig {
                 // ORDEN
 
                 // FACTURA
+                
                 // STOCK
+                
+                // MENU
+                
+                // RESERVACION
+
+                // AREA DE COCINA
+
+                // ESTADISTICAS
+                
                 anyRequest().authenticated()).
                 addFilter(new JwtAuthenticationFilter(authenticationConfiguration.getAuthenticationManager())).
                 addFilter(new JwtValidationFilter(authenticationConfiguration.getAuthenticationManager())).
