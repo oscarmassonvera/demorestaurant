@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.rabbit.demorest.entities.Restaurant;
+import com.rabbit.demorest.entities.Rol;
 import com.rabbit.demorest.repositories.IRestaurantRepo;
 
 @Service
@@ -19,6 +20,16 @@ public class RestaurantServiceImplement implements IRestaurantService {
 
     public ResponseEntity<?> createRestaurant(Restaurant restaurant) {
         try {
+            // Verificar si ya existe un restaurante con un administrador asignado
+            if (restaurant.getUser() != null && restaurant.getUser().stream().anyMatch(user -> user.getRol() == Rol.ADMIN)) {
+                return new ResponseEntity<>("Ya existe un restaurante con un administrador asignado", HttpStatus.BAD_REQUEST);
+            }
+
+            // Establecer la relación entre el restaurante y el usuario administrador
+            if (restaurant.getUser() != null && !restaurant.getUser().isEmpty()) {
+                restaurant.getUser().forEach(user -> user.setRestaurant(restaurant));
+            }
+
             Restaurant createdRestaurant = restaurantRepo.save(restaurant);
             return new ResponseEntity<>(createdRestaurant, HttpStatus.CREATED);
         } catch (Exception e) {

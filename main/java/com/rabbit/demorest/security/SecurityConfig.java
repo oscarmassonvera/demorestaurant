@@ -41,9 +41,9 @@ public class SecurityConfig {
                 (authz)-> authz.                                                // DE LA APP TIENE ACCESO CADA UNO
                 // USUARIO 
                 requestMatchers(HttpMethod.GET,"/api/users").permitAll().
-                requestMatchers(HttpMethod.POST,"/api/users").permitAll(). //.hasRole("RESTAURANT").
+                requestMatchers(HttpMethod.POST,"/api/users").permitAll(). //.hasRole("SUBTADMIN").
                 // PRODUCTO
-                requestMatchers(HttpMethod.GET,"/api/products").hasAnyRole("ADMIN", "WAITER").
+                requestMatchers(HttpMethod.GET,"/api/products").hasAnyRole("ADMIN","SUBTADMIN","WAITER").
                 requestMatchers(HttpMethod.GET,"/api/products/{id}").hasAnyRole("ADMIN", "WAITER").
                 requestMatchers(HttpMethod.POST,"/api/products").hasAnyRole("ADMIN").
                 requestMatchers(HttpMethod.PUT,"/api/products/{id}").hasAnyRole("ADMIN").

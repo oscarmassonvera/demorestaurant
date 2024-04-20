@@ -1,12 +1,13 @@
 package com.rabbit.demorest.entities;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -49,9 +50,8 @@ public class Restaurant {
 
     // --------------------- RELACIONES ---------------------
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private Users user;
+    @OneToMany(mappedBy = "restaurant")
+    private List<Users> user;
     
     // --------------------- GETTERS AND SETTERS ---------------------
 
@@ -117,13 +117,12 @@ public class Restaurant {
     }
 
 
-    public Users getUser() {
+    public List<Users> getUser() {
         return this.user;
     }
 
-    public void setUser(Users user) {
+    public void setUser(List<Users> user) {
         this.user = user;
     }
-    
-
+   
 }

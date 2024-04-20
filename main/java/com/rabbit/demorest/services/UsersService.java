@@ -7,6 +7,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import com.rabbit.demorest.entities.Restaurant;
 import com.rabbit.demorest.entities.Rol;
 import com.rabbit.demorest.entities.Users;
 import com.rabbit.demorest.repositories.IUsersRepo;
@@ -18,10 +20,29 @@ public class UsersService {
     @Autowired
     private IUsersRepo usersRepo;
 
-    public ResponseEntity<?> createUser(Users user) {
+    public ResponseEntity<?> createUser(Users user, Restaurant restaurant) {
         try {
+            // Verificar si este es el primer usuario del restaurante
+            List<Users> usersOfRestaurant = usersRepo.findByRestaurant(restaurant);
+            if (usersOfRestaurant.isEmpty()) {
+                // Si es el primer usuario, asignar automáticamente el rol de administrador
+                user.setRol(Rol.ADMIN);
+            } else {
+                // Si no es el primer usuario, asignar el rol especificado en el objeto user
+                Rol userRole = user.getRol();
+                if (userRole == Rol.ADMIN) {
+                    // Lanzar una excepción si se intenta asignar el rol de administrador
+                    throw new IllegalArgumentException("No se puede asignar el rol de administrador a un usuario existente, ya existe un admin para este restaurant.");
+                }
+            }
+            // Establecer la relación entre el usuario y el restaurante
+            user.setRestaurant(restaurant);
+            
             Users createdUser = usersRepo.save(user);
             return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            // Capturar la excepción si se intenta asignar el rol de administrador
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             return new ResponseEntity<>("No se pudo crear el usuario", HttpStatus.INTERNAL_SERVER_ERROR);
         }
